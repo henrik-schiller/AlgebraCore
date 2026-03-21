@@ -148,18 +148,6 @@ class Transformation:
                 raise ValueError("AlgebraProduct basis must match transformation old_basis")
             return other.transform(self)
 
-        # Apply to PowerElement by flattening/resizing to core basis
-        try:
-            from AlgebraLab.power.power_element import PowerElement  # type: ignore
-        except Exception:
-            PowerElement = None  # type: ignore
-
-        if PowerElement is not None and isinstance(other, PowerElement):
-            core_elem = other.to_core_element()
-            transformed = self @ core_elem
-            # reshape back to tensor form
-            return PowerElement(other.basis, transformed.coeffs.reshape(other.basis.shape))
-
         return NotImplemented
 
     def __mul__(self, other):

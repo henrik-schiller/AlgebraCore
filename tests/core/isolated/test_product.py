@@ -1,6 +1,8 @@
 import numpy as np
+import pytest
 
 from AlgebraCore.basis import Basis
+from AlgebraCore import product as product_module
 from AlgebraCore.product import AlgebraProduct, TensorProduct, prod
 from AlgebraCore.transformation import Transformation
 from AlgebraCore.element import UnitElements
@@ -78,3 +80,44 @@ def test_tensor_product_of_two_algebras():
     e0f1 = u.e0.f1
     res_idem = prod(e0f1, e0f1, TP)
     assert np.allclose(res_idem.coeffs, e0f1.coeffs)
+
+
+def test_algebra_product_negation_and_scalar_multiplication():
+    basis = Basis(["e0", "e1"])
+    C = np.zeros((2, 2, 2), dtype=float)
+    C[0, 0, 0] = 1.0
+    C[1, 1, 1] = 2.0
+
+    product = AlgebraProduct(basis, C)
+
+    np.testing.assert_allclose((-product).C, -C)
+    np.testing.assert_allclose((3 * product).C, 3 * C)
+    np.testing.assert_allclose((product * 0.5).C, 0.5 * C)
+
+
+def test_algebra_product_to_table_string_contains_entries():
+    basis = Basis(["e0", "e1"])
+    C = np.zeros((2, 2, 2), dtype=float)
+    C[0, 0, 0] = 1.0
+    C[0, 1, 1] = 1.0
+    C[1, 0, 1] = -1.0
+
+    product = AlgebraProduct(basis, C)
+    table = product.to_table_string()
+
+    assert "e0" in table
+    assert "e1" in table
+    assert "-e1" in table
+
+
+def test_algebra_product_large_guard_and_override(monkeypatch):
+    monkeypatch.setattr(product_module, "MAX_BASIS_DIMENSION", 2)
+
+    basis = Basis(["e0", "e1", "e2"])
+    C = np.zeros((3, 3, 3), dtype=float)
+
+    with pytest.raises(ValueError, match="too large"):
+        AlgebraProduct(basis, C)
+
+    product = AlgebraProduct(basis, C, allow_large=True)
+    assert product.C.shape == (3, 3, 3)

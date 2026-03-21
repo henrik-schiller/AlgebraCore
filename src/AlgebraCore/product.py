@@ -250,6 +250,9 @@ class AlgebraProduct:
         self._check_compatible(other)
         return AlgebraProduct(self.basis, self.C - other.C)
 
+    def __neg__(self) -> "AlgebraProduct":
+        return AlgebraProduct(self.basis, -self.C)
+
     def __mul__(self, other: Union["AlgebraProduct", Number]) -> "AlgebraProduct":
         if isinstance(other, AlgebraProduct):
             raise TypeError("Element-wise multiplication of AlgebraProducts is disabled")
@@ -355,6 +358,3 @@ def TensorProduct(products: Iterable[AlgebraProduct]) -> AlgebraProduct:
     C_flat = C_combined.reshape(N, N, N)
 
     return AlgebraProduct(basis, C_flat)
-
-    def __neg__(self) -> "AlgebraProduct":
-        return AlgebraProduct(self.basis, -self.C)

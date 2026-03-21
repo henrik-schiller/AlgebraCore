@@ -51,3 +51,24 @@ def test_tensor_basis_builder_combines_axes():
     assert tb.shape == (2, 3)
     assert tb.axes == [["a", "b"], ["x", "y", "z"]]
     assert tb.flatten() == ["a.x", "a.y", "a.z", "b.x", "b.y", "b.z"]
+
+
+def test_tensor_basis_builder_validation_errors():
+    with pytest.raises(ValueError):
+        TensorBasis([])
+
+    with pytest.raises(TypeError):
+        TensorBasis([Basis(["a"]), "not-a-basis"])  # type: ignore[list-item]
+
+
+def test_basis_index_tuple_and_subbasis_errors():
+    basis = Basis([["a", "b"], ["x", "y"]])
+
+    with pytest.raises(IndexError):
+        basis.index_tuple("a")
+
+    with pytest.raises(KeyError):
+        basis.index_tuple("a", "z")
+
+    with pytest.raises(KeyError):
+        basis.subbasis(["a.x", "missing"])
