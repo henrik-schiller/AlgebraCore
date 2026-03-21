@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "AlgebraCore"
+version = "0.1.0"
+description = "Fast NumPy-based primitives for explicit algebras, elements, products, and transformations."
+authors = [
+    { name = "Henrik Schiller" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+keywords = ["algebra", "linear algebra", "numpy", "tensor algebra", "structure constants"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "numpy>=1.20"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/henrik-schiller/AlgebraCore"
+Repository = "https://github.com/henrik-schiller/AlgebraCore"
+Issues = "https://github.com/henrik-schiller/AlgebraCore/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
