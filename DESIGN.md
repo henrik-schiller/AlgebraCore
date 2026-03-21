@@ -21,6 +21,31 @@ law:
 
 Representing the product explicitly keeps that difference visible in code.
 
+## 1a. Why Are Structure Constants A Core Feature?
+
+One of the main points of `AlgebraCore` is that user-defined finite-dimensional
+algebras are not an edge case. They are part of the central design.
+
+If you can choose a basis and write down structure constants
+
+```python
+C[i, j, k]
+```
+
+for the multiplication law, then you can build the algebra directly.
+
+That means the package is not only for the bundled examples in
+`AlgebraCore.std`. Those examples are just convenient instances of the same
+general representation.
+
+The intended way to define such an algebra is plain Python and NumPy:
+
+- define basis labels with `Basis(...)`
+- fill a dense structure-constant tensor with NumPy
+- construct `AlgebraProduct(basis, C)`
+
+No additional configuration language is required.
+
 ## 2. Why `a @ product @ b` Instead Of `a * b`?
 
 The expression
@@ -92,3 +117,19 @@ Both viewpoints are needed:
 
 The API keeps both available, but they are intentionally not the same
 operation.
+
+## 5. Why Is This Different From Just Using NumPy?
+
+`AlgebraCore` is intentionally close to NumPy, but it adds structure that plain
+arrays do not carry by themselves.
+
+NumPy gives efficient dense array operations. `AlgebraCore` keeps that dense
+backend, but adds:
+
+- named bases instead of anonymous axes
+- explicit bilinear products instead of ad hoc multiplication code
+- reusable transformation objects instead of one-off matrix manipulations
+- a uniform representation for many different finite-dimensional algebras
+
+So the goal is not to replace NumPy. The goal is to make algebraic structure
+explicit while still staying in NumPy's fast dense world.

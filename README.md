@@ -12,6 +12,67 @@ This package is meant to stay small and comparatively stable. It is the part
 that can be published independently and used as a fast foundation for more
 specialized layers.
 
+## Core Features
+
+- define any finite-dimensional algebra once you have chosen a basis and its
+  structure constants
+- treat many familiar algebras in one unified computational model
+- keep the implementation dense and fast by storing coefficients and maps in
+  NumPy arrays
+- use algebraic syntax without hiding the product law behind a single overloaded
+  element type
+
+The central point is that `AlgebraCore` is not limited to one algebra family.
+Once a finite-dimensional algebra is expressed in a basis, it is represented in
+the same way:
+
+- a `Basis` for the labels
+- an `Element` for coefficient vectors
+- an `AlgebraProduct` for the bilinear multiplication law
+- a `Transformation` for linear maps and basis changes
+
+That is why complex numbers, matrix algebras, polynomial algebras,
+quaternions, and user-defined algebras can all live in the same API.
+
+## Define Your Own Algebra
+
+Defining your own algebra is a core feature of `AlgebraCore`.
+
+The intended input format is plain Python plus NumPy, not a custom DSL and not
+YAML. In practice, you provide:
+
+- a basis
+- a dense tensor `C[i, j, k]` of structure constants
+
+and construct an `AlgebraProduct`.
+
+```python
+import numpy as np
+
+from AlgebraCore.basis import Basis
+from AlgebraCore.element import UnitElements
+from AlgebraCore.product import AlgebraProduct
+
+basis = Basis(["id", "s"])
+C = np.zeros((2, 2, 2), dtype=float)
+
+# id is the multiplicative identity
+C[0, :, :] = np.eye(2)
+C[:, 0, :] = np.eye(2)
+
+# custom rule: s * s = id + s
+C[1, 1, 0] = 1.0
+C[1, 1, 1] = 1.0
+
+product = AlgebraProduct(basis, C)
+u = UnitElements(basis)
+
+result = (2 * u.id + 3 * u.s) @ product @ (-1 * u.id + 4 * u.s)
+print(result)
+```
+
+So yes: custom algebras given by structure constants are directly supported.
+
 ## What is inside
 
 - `Basis` and `TensorBasis`
@@ -22,6 +83,21 @@ specialized layers.
 
 The standard catalog currently includes familiar dense examples such as complex,
 dual, matrix, polynomial, and quaternion algebras.
+
+## Why This Is A Useful Niche
+
+`AlgebraCore` sits in a specific place between low-level numerical libraries and
+specialized symbolic or geometric-algebra packages.
+
+- compared with plain NumPy, it keeps the algebraic structure explicit instead
+  of leaving you with unnamed arrays and hand-written multiplication logic
+- compared with more specialized algebra packages, it is not restricted to one
+  family such as geometric algebra
+- compared with more symbolic systems, it stays fast by working directly with
+  dense NumPy arrays
+
+So the niche is: explicit, programmable, finite-dimensional algebras with a
+clean algebraic API and a dense numerical backend.
 
 ## About TensorBasis
 
