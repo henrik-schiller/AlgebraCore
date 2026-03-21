@@ -23,6 +23,47 @@ specialized layers.
 The standard catalog currently includes familiar dense examples such as complex,
 dual, matrix, polynomial, and quaternion algebras.
 
+## About TensorBasis
+
+`TensorBasis` is a small computational helper name, not a standard mathematical
+term that readers are expected to already know.
+
+What it does is simple: it takes several factor bases and builds the basis for
+their tensor product by concatenating their axes. The result is still just a
+regular `Basis`.
+
+```python
+TensorBasis([Basis(["a", "b"]), Basis(["x", "y"])])
+```
+
+produces the same kind of object as `Basis([["a", "b"], ["x", "y"]])`.
+
+The helper exists because this is exactly what is needed computationally for
+outer products of elements, Kronecker-style tensor products of transformations,
+and tensor products of algebra products. In other words, the name is chosen for
+programming clarity, not because `TensorBasis` is meant to introduce a new
+mathematical object beyond `Basis`.
+
+## Transformation Conventions
+
+`Transformation` is used in two closely related but not identical ways, and it
+is worth stating that explicitly.
+
+- `tf @ elem` is the primary computational application operator. It contracts
+  the stored transformation tensor with the element coefficients.
+- `elem.transform(tf)` is the basis-change helper. It applies the inverse of the
+  flattened transformation matrix.
+
+This distinction exists because the library needs both viewpoints:
+
+- a transformation as an explicit multilinear array that can be contracted,
+  tensored, and composed
+- a transformation as a change-of-basis object between coordinate systems
+
+If you are using `Transformation` as a linear operator in computations, prefer
+`tf @ elem`. If you are explicitly changing coordinates from one basis
+description to another, prefer `elem.transform(tf)`.
+
 ## Installation
 
 ```bash
