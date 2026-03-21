@@ -64,6 +64,44 @@ If you are using `Transformation` as a linear operator in computations, prefer
 `tf @ elem`. If you are explicitly changing coordinates from one basis
 description to another, prefer `elem.transform(tf)`.
 
+## Why `a @ product @ b`?
+
+In AlgebraCore, the multiplication law is explicit.
+
+Instead of baking a single product into the `Element` type, the product itself
+is treated as a first-class object. This matters because the same basis can
+support different bilinear laws: for example matrix multiplication, polynomial
+multiplication, Clifford products, exterior products, interior products, or
+user-defined products.
+
+For that reason, AlgebraCore prefers
+
+```python
+a @ product @ b
+```
+
+instead of overloading
+
+```python
+a * b
+```
+
+as algebra multiplication.
+
+This keeps different operations clearly separated:
+
+- `scalar * element` means scalar scaling
+- `a @ product @ b` means multiply with an explicit bilinear law
+- `transformation @ element` means apply a linear map
+
+The same `@` operator is therefore used consistently for contraction,
+application, and composition of explicit algebraic structures.
+
+## Design Notes
+
+For a slightly more explicit discussion of the main API choices, see
+`DESIGN.md`.
+
 ## Installation
 
 ```bash
