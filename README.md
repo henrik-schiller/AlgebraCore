@@ -34,6 +34,31 @@ the same way:
 That is why complex numbers, matrix algebras, polynomial algebras,
 quaternions, and user-defined algebras can all live in the same API.
 
+## One notation for many products
+
+Mathematics often uses different symbols for different bilinear laws. In code,
+`AlgebraCore` makes the product itself explicit and uses one consistent form:
+
+```python
+a @ product @ b
+```
+
+This does not erase the mathematical differences between those products. It
+makes the choice of product programmable, inspectable, and swappable while the
+underlying data stays fast and dense in NumPy arrays.
+
+| Math idea | Typical notation | AlgebraCore |
+| --- | --- | --- |
+| matrix product | `AB` | `A @ matrix_product @ B` |
+| polynomial product | `p(x)q(x)` | `p @ polynomial_product @ q` |
+| Clifford product | `ab` | `a @ clifford_product @ b` |
+| exterior product | `a ∧ b` | `a @ wedge_product @ b` |
+| Lie bracket | `[a, b]` | `a @ lie_product @ b` |
+
+The point is deliberate: many algebras look different on paper, but once a
+basis and a bilinear law are fixed, they can be handled in one computational
+form.
+
 ## Define Your Own Algebra
 
 Defining your own algebra is a core feature of `AlgebraCore`.
@@ -180,16 +205,27 @@ For a slightly more explicit discussion of the main API choices, see
 
 ## Installation
 
+For regular use, install directly from GitHub:
+
 ```bash
-pip install -e .
+pip install "git+https://github.com/henrik-schiller/AlgebraCore.git"
 ```
 
-For tests:
+For local development:
 
 ```bash
 pip install -e ".[test]"
+```
+
+Then run the test suite with:
+
+```bash
 pytest
 ```
+
+`AlgebraCore` is versioned and packaged as a normal Python project, but GitHub
+is currently the intended installation path until the first PyPI release is
+cut.
 
 ## Quick example
 
