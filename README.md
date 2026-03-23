@@ -205,7 +205,13 @@ For a slightly more explicit discussion of the main API choices, see
 
 ## Installation
 
-For regular use, install directly from GitHub:
+Install the published package from PyPI:
+
+```bash
+pip install AlgebraCore
+```
+
+To use the latest repository state directly from GitHub:
 
 ```bash
 pip install "git+https://github.com/henrik-schiller/AlgebraCore.git"
@@ -222,10 +228,6 @@ Then run the test suite with:
 ```bash
 pytest
 ```
-
-`AlgebraCore` is versioned and packaged as a normal Python project, but GitHub
-is currently the intended installation path until the first PyPI release is
-cut.
 
 The release procedure for PyPI is described in `RELEASING.md`.
 
