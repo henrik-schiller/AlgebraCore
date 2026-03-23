@@ -227,6 +227,8 @@ pytest
 is currently the intended installation path until the first PyPI release is
 cut.
 
+The release procedure for PyPI is described in `RELEASING.md`.
+
 ## Quick example
 
 ```python
