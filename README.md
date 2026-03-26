@@ -86,9 +86,18 @@ u_complex = UnitElements(complex_basis())
 u_split = UnitElements(split_complex_basis())
 u_so3 = UnitElements(so3_lie_basis())
 
-print(u_complex.i @ complex_product() @ u_complex.i)      # -id
-print(u_split.j @ split_complex_product() @ u_split.j)    # id
-print(u_so3.e1 @ so3_lie_product() @ u_so3.e2)            # e3
+z = 2 * u_complex.id + 3 * u_complex.i
+w = -1 * u_complex.id + 4 * u_complex.i
+
+a = 2 * u_split.id + 1 * u_split.j
+b = -1 * u_split.id + 3 * u_split.j
+
+x = 2 * u_so3.e1 + 1 * u_so3.e2
+y = -1 * u_so3.e2 + 4 * u_so3.e3
+
+print(z @ complex_product() @ w)            # -14*id + 5*i
+print(a @ split_complex_product() @ b)      # 1*id + 5*j
+print(x @ so3_lie_product() @ y)            # 4*e1 + -8*e2 + -2*e3
 ```
 
 This is the main idea behind the module: complex numbers, split-complex
