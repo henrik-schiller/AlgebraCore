@@ -59,6 +59,22 @@ The point is deliberate: many algebras look different on paper, but once a
 basis and a bilinear law are fixed, they can be handled in one computational
 form.
 
+## Quick example
+
+```python
+from AlgebraCore.element import UnitElements
+from AlgebraCore.std import complex_basis, complex_product
+
+basis = complex_basis()
+product = complex_product(basis)
+u = UnitElements(basis)
+
+z = 2 * u.id + 3 * u.i
+w = -1 * u.id + 4 * u.i
+
+print(z @ product @ w)  # -14*id + 5*i
+```
+
 ## Define Your Own Algebra
 
 Defining your own algebra is a core feature of `AlgebraCore`.
@@ -108,21 +124,6 @@ So yes: custom algebras given by structure constants are directly supported.
 
 The standard catalog currently includes familiar dense examples such as complex,
 dual, matrix, polynomial, and quaternion algebras.
-
-## Why This Is A Useful Niche
-
-`AlgebraCore` sits in a specific place between low-level numerical libraries and
-specialized symbolic or geometric-algebra packages.
-
-- compared with plain NumPy, it keeps the algebraic structure explicit instead
-  of leaving you with unnamed arrays and hand-written multiplication logic
-- compared with more specialized algebra packages, it is not restricted to one
-  family such as geometric algebra
-- compared with more symbolic systems, it stays fast by working directly with
-  dense NumPy arrays
-
-So the niche is: explicit, programmable, finite-dimensional algebras with a
-clean algebraic API and a dense numerical backend.
 
 ## About TensorBasis
 
@@ -230,22 +231,6 @@ pytest
 ```
 
 The release procedure for PyPI is described in `RELEASING.md`.
-
-## Quick example
-
-```python
-from AlgebraCore.element import UnitElements
-from AlgebraCore.std import complex_basis, complex_product
-
-basis = complex_basis()
-product = complex_product(basis)
-u = UnitElements(basis)
-
-z = 2 * u.id + 3 * u.i
-w = -1 * u.id + 4 * u.i
-
-print(z @ product @ w)  # -14*id + 5*i
-```
 
 ## Status
 
