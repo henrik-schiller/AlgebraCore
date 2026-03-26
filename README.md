@@ -67,6 +67,37 @@ pytest
 
 The release procedure for PyPI is described in `RELEASING.md`.
 
+## Many algebras, one module
+
+The point of `AlgebraCore` is not only that you can define a single algebra
+explicitly. It is that many different algebras can be handled in the same
+computational form.
+
+```python
+from AlgebraCore.element import UnitElements
+from AlgebraCore.std import (
+    complex_basis,
+    complex_product,
+    so3_lie_basis,
+    so3_lie_product,
+    split_complex_basis,
+    split_complex_product,
+)
+
+u_complex = UnitElements(complex_basis())
+u_split = UnitElements(split_complex_basis())
+u_so3 = UnitElements(so3_lie_basis())
+
+print(u_complex.i @ complex_product() @ u_complex.i)      # -id
+print(u_split.j @ split_complex_product() @ u_split.j)    # id
+print(u_so3.e1 @ so3_lie_product() @ u_so3.e2)            # e3
+```
+
+This is the main idea behind the module: complex numbers, split-complex
+numbers, matrix algebras, polynomial algebras, quaternions, octonions, and
+simple Lie-algebra examples all fit into the same explicit basis-plus-product
+framework.
+
 ## Quick example
 
 ```python
