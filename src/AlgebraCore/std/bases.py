@@ -16,6 +16,16 @@ def dual_basis() -> Basis:
     return Basis(["id", "eps"])
 
 
+def split_complex_basis() -> Basis:
+    """Basis for split-complex / perplex numbers: {id, j} with j^2 = id."""
+    return Basis(["id", "j"])
+
+
+def perplex_basis() -> Basis:
+    """Alias for split-complex numbers."""
+    return split_complex_basis()
+
+
 def basis_name(i: int, j: int) -> str:
     """Name basis element E_ij as 'Eij'."""
     return f"E{i}{j}"
@@ -79,3 +89,18 @@ def polynomial_basis(max_degree: int = 10, var: str = "y") -> Basis:
 def quaternion_basis() -> Basis:
     """Basis for the quaternions H: {1, i, j, k}."""
     return Basis(["1", "i", "j", "k"])
+
+
+def octonion_basis() -> Basis:
+    """Basis for the octonions O: {1, e1, ..., e7}."""
+    return Basis(["1", "e1", "e2", "e3", "e4", "e5", "e6", "e7"])
+
+
+def so3_lie_basis() -> Basis:
+    """Basis for the Lie algebra so(3): {e1, e2, e3}."""
+    return Basis(["e1", "e2", "e3"])
+
+
+def heisenberg_lie_basis() -> Basis:
+    """Basis for the 3D Heisenberg Lie algebra: {x, y, z}."""
+    return Basis(["x", "y", "z"])

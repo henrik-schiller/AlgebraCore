@@ -10,10 +10,14 @@ from .bases import (
     basis_name,
     complex_basis,
     dual_basis,
+    heisenberg_lie_basis,
     generate_exponents,
     matrix_basis,
     monomial_name,
+    octonion_basis,
     polynomial_basis,
+    split_complex_basis,
+    so3_lie_basis,
     quaternion_basis,
 )
 
@@ -41,6 +45,24 @@ def dual_product(basis: Basis | None = None) -> AlgebraProduct:
     C[0, 1, 1] = 1.0
     C[1, 0, 1] = 1.0
     return AlgebraProduct(basis, C)
+
+
+def split_complex_product(basis: Basis | None = None) -> AlgebraProduct:
+    """AlgebraProduct for split-complex / perplex numbers."""
+    if basis is None:
+        basis = split_complex_basis()
+
+    C = np.zeros((2, 2, 2), dtype=float)
+    C[0, 0, 0] = 1.0
+    C[0, 1, 1] = 1.0
+    C[1, 0, 1] = 1.0
+    C[1, 1, 0] = 1.0
+    return AlgebraProduct(basis, C)
+
+
+def perplex_product(basis: Basis | None = None) -> AlgebraProduct:
+    """Alias for split-complex product."""
+    return split_complex_product(basis)
 
 
 def matrix_product(n: int, basis: Basis | None = None) -> AlgebraProduct:
@@ -140,4 +162,79 @@ def quaternion_product(basis: Basis | None = None) -> AlgebraProduct:
     set_prod("k", "i", "j")
     set_prod("i", "k", {"j": -1.0})
 
+    return AlgebraProduct(basis, C)
+
+
+def octonion_product(basis: Basis | None = None) -> AlgebraProduct:
+    """AlgebraProduct for the octonions via oriented Fano-plane triples."""
+    if basis is None:
+        basis = octonion_basis()
+
+    name_to_idx = basis.name_to_idx
+    C = np.zeros((len(basis), len(basis), len(basis)), dtype=float)
+
+    def set_prod(left: str, right: str, out: str, coeff: float = 1.0) -> None:
+        C[name_to_idx[left], name_to_idx[right], name_to_idx[out]] += float(coeff)
+
+    for name in basis.names:
+        set_prod("1", name, name)
+        set_prod(name, "1", name)
+
+    for name in basis.names[1:]:
+        set_prod(name, name, "1", -1.0)
+
+    triples = [
+        ("e1", "e2", "e3"),
+        ("e1", "e4", "e5"),
+        ("e1", "e7", "e6"),
+        ("e2", "e4", "e6"),
+        ("e2", "e5", "e7"),
+        ("e3", "e4", "e7"),
+        ("e3", "e5", "e6"),
+    ]
+
+    def add_triple(a: str, b: str, c: str) -> None:
+        set_prod(a, b, c, 1.0)
+        set_prod(b, c, a, 1.0)
+        set_prod(c, a, b, 1.0)
+        set_prod(b, a, c, -1.0)
+        set_prod(c, b, a, -1.0)
+        set_prod(a, c, b, -1.0)
+
+    for triple in triples:
+        add_triple(*triple)
+
+    return AlgebraProduct(basis, C)
+
+
+def so3_lie_product(basis: Basis | None = None) -> AlgebraProduct:
+    """Lie bracket for so(3) in the basis {e1, e2, e3}."""
+    if basis is None:
+        basis = so3_lie_basis()
+
+    name_to_idx = basis.name_to_idx
+    C = np.zeros((len(basis), len(basis), len(basis)), dtype=float)
+
+    def set_bracket(left: str, right: str, out: str, coeff: float = 1.0) -> None:
+        C[name_to_idx[left], name_to_idx[right], name_to_idx[out]] += float(coeff)
+
+    set_bracket("e1", "e2", "e3")
+    set_bracket("e2", "e3", "e1")
+    set_bracket("e3", "e1", "e2")
+    set_bracket("e2", "e1", "e3", -1.0)
+    set_bracket("e3", "e2", "e1", -1.0)
+    set_bracket("e1", "e3", "e2", -1.0)
+
+    return AlgebraProduct(basis, C)
+
+
+def heisenberg_lie_product(basis: Basis | None = None) -> AlgebraProduct:
+    """Lie bracket for the 3D Heisenberg algebra with [x, y] = z."""
+    if basis is None:
+        basis = heisenberg_lie_basis()
+
+    name_to_idx = basis.name_to_idx
+    C = np.zeros((len(basis), len(basis), len(basis)), dtype=float)
+    C[name_to_idx["x"], name_to_idx["y"], name_to_idx["z"]] = 1.0
+    C[name_to_idx["y"], name_to_idx["x"], name_to_idx["z"]] = -1.0
     return AlgebraProduct(basis, C)

@@ -1,29 +1,41 @@
-"""Small stable standard catalog for AlgebraCore."""
+"""Curated showcase catalog for AlgebraCore."""
 
 from .bases import (
     basis_name,
     basis_name_from_axes,
     complex_basis,
     dual_basis,
+    heisenberg_lie_basis,
     exterior_matrix_basis,
     generate_exponents,
     matrix_basis,
     matrix_basis_from_axes,
     monomial_name,
+    octonion_basis,
+    perplex_basis,
     polynomial_basis,
     quaternion_basis,
+    so3_lie_basis,
+    split_complex_basis,
 )
 from .products import (
     complex_product,
     dual_product,
+    heisenberg_lie_product,
     matrix_product,
+    octonion_product,
+    perplex_product,
     polynomial_product,
     quaternion_product,
+    so3_lie_product,
+    split_complex_product,
 )
 
 __all__ = [
     "complex_basis",
     "dual_basis",
+    "split_complex_basis",
+    "perplex_basis",
     "basis_name",
     "basis_name_from_axes",
     "matrix_basis",
@@ -33,9 +45,17 @@ __all__ = [
     "monomial_name",
     "polynomial_basis",
     "quaternion_basis",
+    "octonion_basis",
+    "so3_lie_basis",
+    "heisenberg_lie_basis",
     "complex_product",
     "dual_product",
+    "split_complex_product",
+    "perplex_product",
     "matrix_product",
     "polynomial_product",
     "quaternion_product",
+    "octonion_product",
+    "so3_lie_product",
+    "heisenberg_lie_product",
 ]

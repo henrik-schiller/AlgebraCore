@@ -34,6 +34,11 @@ the same way:
 That is why complex numbers, matrix algebras, polynomial algebras,
 quaternions, and user-defined algebras can all live in the same API.
 
+The bundled `AlgebraCore.std` catalog is intentionally also a showcase. It is
+there not only for convenience, but to make concrete that many things that look
+very different on paper can still be treated as explicit algebras in the same
+framework.
+
 ## Installation
 
 Install the published package from PyPI:
@@ -156,10 +161,11 @@ So yes: custom algebras given by structure constants are directly supported.
 - `Element` and `UnitElements`
 - `AlgebraProduct` and tensor products of products
 - `Transformation`
-- a small stable standard catalog under `AlgebraCore.std`
+- a curated standard catalog under `AlgebraCore.std`
 
-The standard catalog currently includes familiar dense examples such as complex,
-dual, matrix, polynomial, and quaternion algebras.
+The standard catalog currently includes familiar dense examples such as
+complex, dual, split-complex, matrix, polynomial, quaternion, octonion, and
+simple Lie-algebra examples.
 
 ## About TensorBasis
 
