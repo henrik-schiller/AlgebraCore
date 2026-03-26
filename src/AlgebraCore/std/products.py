@@ -10,22 +10,33 @@ from .bases import (
     basis_name,
     complex_basis,
     dual_basis,
-    heisenberg_lie_basis,
     generate_exponents,
+    heisenberg_lie_basis,
     matrix_basis,
     monomial_name,
     octonion_basis,
     polynomial_basis,
-    split_complex_basis,
-    so3_lie_basis,
     quaternion_basis,
+    so3_lie_basis,
+    split_complex_basis,
 )
 
 
-def complex_product(basis: Basis | None = None) -> AlgebraProduct:
+class CanonicalProduct(AlgebraProduct):
+    """A canonical product constant that can rebuild itself on a matching basis."""
+
+    def __call__(self, basis: Basis | None = None) -> AlgebraProduct:
+        if basis is None or basis is self.basis:
+            return self
+        if basis.names != self.basis.names:
+            raise ValueError("Provided basis does not match the canonical basis labels.")
+        return AlgebraProduct(basis, self.C.copy())
+
+
+def _build_complex_product(basis: Basis | None = None) -> AlgebraProduct:
     """AlgebraProduct for complex numbers."""
     if basis is None:
-        basis = complex_basis()
+        basis = complex_basis
 
     C = np.zeros((2, 2, 2), dtype=float)
     C[0, 0, 0] = 1.0
@@ -35,10 +46,10 @@ def complex_product(basis: Basis | None = None) -> AlgebraProduct:
     return AlgebraProduct(basis, C)
 
 
-def dual_product(basis: Basis | None = None) -> AlgebraProduct:
+def _build_dual_product(basis: Basis | None = None) -> AlgebraProduct:
     """AlgebraProduct for dual numbers."""
     if basis is None:
-        basis = dual_basis()
+        basis = dual_basis
 
     C = np.zeros((2, 2, 2), dtype=float)
     C[0, 0, 0] = 1.0
@@ -47,10 +58,10 @@ def dual_product(basis: Basis | None = None) -> AlgebraProduct:
     return AlgebraProduct(basis, C)
 
 
-def split_complex_product(basis: Basis | None = None) -> AlgebraProduct:
+def _build_split_complex_product(basis: Basis | None = None) -> AlgebraProduct:
     """AlgebraProduct for split-complex / perplex numbers."""
     if basis is None:
-        basis = split_complex_basis()
+        basis = split_complex_basis
 
     C = np.zeros((2, 2, 2), dtype=float)
     C[0, 0, 0] = 1.0
@@ -58,11 +69,6 @@ def split_complex_product(basis: Basis | None = None) -> AlgebraProduct:
     C[1, 0, 1] = 1.0
     C[1, 1, 0] = 1.0
     return AlgebraProduct(basis, C)
-
-
-def perplex_product(basis: Basis | None = None) -> AlgebraProduct:
-    """Alias for split-complex product."""
-    return split_complex_product(basis)
 
 
 def matrix_product(n: int, basis: Basis | None = None) -> AlgebraProduct:
@@ -128,10 +134,10 @@ def polynomial_product(
     return AlgebraProduct(basis, C)
 
 
-def quaternion_product(basis: Basis | None = None) -> AlgebraProduct:
+def _build_quaternion_product(basis: Basis | None = None) -> AlgebraProduct:
     """AlgebraProduct for the quaternions H."""
     if basis is None:
-        basis = quaternion_basis()
+        basis = quaternion_basis
 
     name_to_idx = basis.name_to_idx
     C = np.zeros((len(basis), len(basis), len(basis)), dtype=float)
@@ -165,10 +171,10 @@ def quaternion_product(basis: Basis | None = None) -> AlgebraProduct:
     return AlgebraProduct(basis, C)
 
 
-def octonion_product(basis: Basis | None = None) -> AlgebraProduct:
+def _build_octonion_product(basis: Basis | None = None) -> AlgebraProduct:
     """AlgebraProduct for the octonions via oriented Fano-plane triples."""
     if basis is None:
-        basis = octonion_basis()
+        basis = octonion_basis
 
     name_to_idx = basis.name_to_idx
     C = np.zeros((len(basis), len(basis), len(basis)), dtype=float)
@@ -207,10 +213,10 @@ def octonion_product(basis: Basis | None = None) -> AlgebraProduct:
     return AlgebraProduct(basis, C)
 
 
-def so3_lie_product(basis: Basis | None = None) -> AlgebraProduct:
+def _build_so3_lie_bracket(basis: Basis | None = None) -> AlgebraProduct:
     """Lie bracket for so(3) in the basis {e1, e2, e3}."""
     if basis is None:
-        basis = so3_lie_basis()
+        basis = so3_lie_basis
 
     name_to_idx = basis.name_to_idx
     C = np.zeros((len(basis), len(basis), len(basis)), dtype=float)
@@ -228,13 +234,42 @@ def so3_lie_product(basis: Basis | None = None) -> AlgebraProduct:
     return AlgebraProduct(basis, C)
 
 
-def heisenberg_lie_product(basis: Basis | None = None) -> AlgebraProduct:
+def _build_heisenberg_lie_bracket(basis: Basis | None = None) -> AlgebraProduct:
     """Lie bracket for the 3D Heisenberg algebra with [x, y] = z."""
     if basis is None:
-        basis = heisenberg_lie_basis()
+        basis = heisenberg_lie_basis
 
     name_to_idx = basis.name_to_idx
     C = np.zeros((len(basis), len(basis), len(basis)), dtype=float)
     C[name_to_idx["x"], name_to_idx["y"], name_to_idx["z"]] = 1.0
     C[name_to_idx["y"], name_to_idx["x"], name_to_idx["z"]] = -1.0
     return AlgebraProduct(basis, C)
+
+
+complex_product = CanonicalProduct(complex_basis, _build_complex_product(complex_basis).C)
+dual_product = CanonicalProduct(dual_basis, _build_dual_product(dual_basis).C)
+split_complex_product = CanonicalProduct(
+    split_complex_basis,
+    _build_split_complex_product(split_complex_basis).C,
+)
+perplex_product = split_complex_product
+quaternion_product = CanonicalProduct(
+    quaternion_basis,
+    _build_quaternion_product(quaternion_basis).C,
+)
+octonion_product = CanonicalProduct(
+    octonion_basis,
+    _build_octonion_product(octonion_basis).C,
+)
+so3_lie_bracket = CanonicalProduct(
+    so3_lie_basis,
+    _build_so3_lie_bracket(so3_lie_basis).C,
+)
+heisenberg_lie_bracket = CanonicalProduct(
+    heisenberg_lie_basis,
+    _build_heisenberg_lie_bracket(heisenberg_lie_basis).C,
+)
+
+# Backward-compatible aliases for older naming.
+so3_lie_product = so3_lie_bracket
+heisenberg_lie_product = heisenberg_lie_bracket

@@ -4,6 +4,7 @@ from .bases import (
     basis_name,
     basis_name_from_axes,
     complex_basis,
+    CanonicalBasis,
     dual_basis,
     heisenberg_lie_basis,
     exterior_matrix_basis,
@@ -19,20 +20,24 @@ from .bases import (
     split_complex_basis,
 )
 from .products import (
+    CanonicalProduct,
     complex_product,
     dual_product,
+    heisenberg_lie_bracket,
     heisenberg_lie_product,
     matrix_product,
     octonion_product,
     perplex_product,
     polynomial_product,
     quaternion_product,
+    so3_lie_bracket,
     so3_lie_product,
     split_complex_product,
 )
 
 __all__ = [
     "complex_basis",
+    "CanonicalBasis",
     "dual_basis",
     "split_complex_basis",
     "perplex_basis",
@@ -49,6 +54,7 @@ __all__ = [
     "so3_lie_basis",
     "heisenberg_lie_basis",
     "complex_product",
+    "CanonicalProduct",
     "dual_product",
     "split_complex_product",
     "perplex_product",
@@ -56,6 +62,8 @@ __all__ = [
     "polynomial_product",
     "quaternion_product",
     "octonion_product",
+    "so3_lie_bracket",
     "so3_lie_product",
+    "heisenberg_lie_bracket",
     "heisenberg_lie_product",
 ]

@@ -6,24 +6,26 @@ from typing import List
 from AlgebraCore.basis import Basis
 
 
-def complex_basis() -> Basis:
+class CanonicalBasis(Basis):
+    """A canonical basis constant that can also be called to create a copy."""
+
+    def __call__(self) -> Basis:
+        return Basis([list(axis) for axis in self.axes])
+
+
+def _build_complex_basis() -> Basis:
     """Standard basis for complex numbers: {id, i}."""
     return Basis(["id", "i"])
 
 
-def dual_basis() -> Basis:
+def _build_dual_basis() -> Basis:
     """Basis for dual numbers R[eps] / (eps^2): {id, eps}."""
     return Basis(["id", "eps"])
 
 
-def split_complex_basis() -> Basis:
+def _build_split_complex_basis() -> Basis:
     """Basis for split-complex / perplex numbers: {id, j} with j^2 = id."""
     return Basis(["id", "j"])
-
-
-def perplex_basis() -> Basis:
-    """Alias for split-complex numbers."""
-    return split_complex_basis()
 
 
 def basis_name(i: int, j: int) -> str:
@@ -86,21 +88,31 @@ def polynomial_basis(max_degree: int = 10, var: str = "y") -> Basis:
     return Basis(names)
 
 
-def quaternion_basis() -> Basis:
+def _build_quaternion_basis() -> Basis:
     """Basis for the quaternions H: {1, i, j, k}."""
     return Basis(["1", "i", "j", "k"])
 
 
-def octonion_basis() -> Basis:
+def _build_octonion_basis() -> Basis:
     """Basis for the octonions O: {1, e1, ..., e7}."""
     return Basis(["1", "e1", "e2", "e3", "e4", "e5", "e6", "e7"])
 
 
-def so3_lie_basis() -> Basis:
+def _build_so3_lie_basis() -> Basis:
     """Basis for the Lie algebra so(3): {e1, e2, e3}."""
     return Basis(["e1", "e2", "e3"])
 
 
-def heisenberg_lie_basis() -> Basis:
+def _build_heisenberg_lie_basis() -> Basis:
     """Basis for the 3D Heisenberg Lie algebra: {x, y, z}."""
     return Basis(["x", "y", "z"])
+
+
+complex_basis = CanonicalBasis(_build_complex_basis().axes)
+dual_basis = CanonicalBasis(_build_dual_basis().axes)
+split_complex_basis = CanonicalBasis(_build_split_complex_basis().axes)
+perplex_basis = split_complex_basis
+quaternion_basis = CanonicalBasis(_build_quaternion_basis().axes)
+octonion_basis = CanonicalBasis(_build_octonion_basis().axes)
+so3_lie_basis = CanonicalBasis(_build_so3_lie_basis().axes)
+heisenberg_lie_basis = CanonicalBasis(_build_heisenberg_lie_basis().axes)

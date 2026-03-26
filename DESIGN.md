@@ -11,6 +11,15 @@ Instead, the multiplication law is represented explicitly by an
 `AlgebraProduct`. That means the same basis and the same coefficient vectors can
 be combined with different bilinear products.
 
+This is a deliberate separation of concerns:
+
+- a `Basis` describes labels and coordinates
+- an `AlgebraProduct` describes one bilinear law on that space
+
+So a basis is not tied one-to-one to a unique product. The same basis can carry
+different bilinear laws, for example Clifford, exterior, and interior products
+on the same underlying coordinate space.
+
 This is important because many familiar algebras differ mainly by their product
 law:
 
@@ -21,7 +30,23 @@ law:
 
 Representing the product explicitly keeps that difference visible in code.
 
-## 1a. Why Are Structure Constants A Core Feature?
+## 1a. Why Does `AlgebraCore.std` Export Canonical Product Objects?
+
+For the fixed examples in `AlgebraCore.std`, the preferred API is now a
+canonical object such as `complex_product` or `so3_lie_bracket`, not only a
+factory function.
+
+That is only a convenience choice for the bundled showcase examples. It is not
+a statement that a basis has one privileged product.
+
+The point is:
+
+- `complex_basis` and `complex_product` are convenient canonical representatives
+- the design still allows many different products on the same basis
+- the callable form is kept so the same canonical product can be rebuilt on
+  another matching basis instance when needed
+
+## 1b. Why Are Structure Constants A Core Feature?
 
 One of the main points of `AlgebraCore` is that user-defined finite-dimensional
 algebras are not an edge case. They are part of the central design.

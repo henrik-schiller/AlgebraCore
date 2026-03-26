@@ -19,6 +19,8 @@ and a fast foundation for richer layers.
   NumPy arrays
 - use algebraic syntax without hiding the product law behind a single overloaded
   element type
+- allow multiple bilinear products on the same basis, instead of tying one
+  basis to one privileged multiplication
 
 The central point is that `AlgebraCore` is not limited to one algebra family.
 Once a finite-dimensional algebra is expressed in a basis, it is represented in
@@ -76,15 +78,15 @@ from AlgebraCore.element import UnitElements
 from AlgebraCore.std import (
     complex_basis,
     complex_product,
+    so3_lie_bracket,
     so3_lie_basis,
-    so3_lie_product,
     split_complex_basis,
     split_complex_product,
 )
 
-u_complex = UnitElements(complex_basis())
-u_split = UnitElements(split_complex_basis())
-u_so3 = UnitElements(so3_lie_basis())
+u_complex = UnitElements(complex_basis)
+u_split = UnitElements(split_complex_basis)
+u_so3 = UnitElements(so3_lie_basis)
 
 z = 2 * u_complex.id + 3 * u_complex.i
 w = -1 * u_complex.id + 4 * u_complex.i
@@ -95,9 +97,9 @@ b = -1 * u_split.id + 3 * u_split.j
 x = 2 * u_so3.e1 + 1 * u_so3.e2
 y = -1 * u_so3.e2 + 4 * u_so3.e3
 
-print(z @ complex_product() @ w)            # -14*id + 5*i
-print(a @ split_complex_product() @ b)      # 1*id + 5*j
-print(x @ so3_lie_product() @ y)            # 4*e1 + -8*e2 + -2*e3
+print(z @ complex_product @ w)              # -14*id + 5*i
+print(a @ split_complex_product @ b)        # 1*id + 5*j
+print(x @ so3_lie_bracket @ y)              # 4*e1 + -8*e2 + -2*e3
 ```
 
 This is the main idea behind the module: complex numbers, split-complex
@@ -111,8 +113,8 @@ framework.
 from AlgebraCore.element import UnitElements
 from AlgebraCore.std import complex_basis, complex_product
 
-basis = complex_basis()
-product = complex_product(basis)
+basis = complex_basis
+product = complex_product
 u = UnitElements(basis)
 
 z = 2 * u.id + 3 * u.i
@@ -134,13 +136,19 @@ This does not erase the mathematical differences between those products. It
 makes the choice of product programmable, inspectable, and swappable while the
 underlying data stays fast and dense in NumPy arrays.
 
+This is important because a basis and a product are not the same thing. The
+same basis may support several different bilinear laws. For example, one and
+the same coordinate basis can carry Clifford, exterior, and interior products.
+`AlgebraCore` keeps that choice explicit instead of baking one multiplication
+directly into the element type.
+
 | Math idea | Typical notation | AlgebraCore |
 | --- | --- | --- |
 | matrix product | `AB` | `A @ matrix_product @ B` |
 | polynomial product | `p(x)q(x)` | `p @ polynomial_product @ q` |
 | Clifford product | `ab` | `a @ clifford_product @ b` |
 | exterior product | `a ∧ b` | `a @ wedge_product @ b` |
-| Lie bracket | `[a, b]` | `a @ lie_product @ b` |
+| Lie bracket | `[a, b]` | `a @ lie_bracket @ b` |
 
 Instead of hiding multiplication inside `Element`, `AlgebraCore` treats the
 product itself as a first-class object. That keeps scalar scaling and algebra
@@ -204,6 +212,11 @@ So yes: custom algebras given by structure constants are directly supported.
 The standard catalog currently includes familiar dense examples such as
 complex, dual, split-complex, matrix, polynomial, quaternion, octonion, and
 simple Lie-algebra examples.
+
+For the fixed canonical examples in `AlgebraCore.std`, the preferred style is
+to use the exported basis and product objects directly, for example
+`complex_basis`, `complex_product`, or `so3_lie_bracket`. Those are convenient
+canonical representatives, not a claim that a basis admits only one product.
 
 ## About TensorBasis
 
