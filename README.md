@@ -1,16 +1,14 @@
 # AlgebraCore
 
-AlgebraCore is the small, dense, NumPy-based core behind the broader Algebra
-stack.
+AlgebraCore is a fast Python module for defining and computing with explicit
+algebras.
 
-It provides explicit algebra objects that stay close to arrays while adding the
-structure NumPy does not model directly: named bases, coefficient elements,
-bilinear products via structure constants, and linear transformations between
-those spaces.
+It stays close to NumPy arrays while making the algebraic structure explicit:
+named bases, coefficient elements, bilinear products via structure constants,
+and linear transformations between those spaces.
 
-This package is meant to stay small and comparatively stable. It is the part
-that can be published independently and used as a fast foundation for more
-specialized layers.
+The package is meant to be a small public kernel that is both useful on its own
+and a fast foundation for richer layers.
 
 ## Core Features
 

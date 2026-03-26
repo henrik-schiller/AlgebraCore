@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "AlgebraCore"
-version = "0.1.0"
-description = "Fast NumPy-based primitives for explicit algebras, elements, products, and transformations."
+version = "0.2.0"
+description = "A fast Python module for defining and computing with explicit algebras."
 authors = [
     { name = "Henrik Schiller" }
 ]
