@@ -34,7 +34,51 @@ the same way:
 That is why complex numbers, matrix algebras, polynomial algebras,
 quaternions, and user-defined algebras can all live in the same API.
 
-## One notation for many products
+## Installation
+
+Install the published package from PyPI:
+
+```bash
+pip install AlgebraCore
+```
+
+To use the latest repository state directly from GitHub:
+
+```bash
+pip install "git+https://github.com/henrik-schiller/AlgebraCore.git"
+```
+
+For local development:
+
+```bash
+pip install -e ".[test]"
+```
+
+Then run the test suite with:
+
+```bash
+pytest
+```
+
+The release procedure for PyPI is described in `RELEASING.md`.
+
+## Quick example
+
+```python
+from AlgebraCore.element import UnitElements
+from AlgebraCore.std import complex_basis, complex_product
+
+basis = complex_basis()
+product = complex_product(basis)
+u = UnitElements(basis)
+
+z = 2 * u.id + 3 * u.i
+w = -1 * u.id + 4 * u.i
+
+print(z @ product @ w)  # -14*id + 5*i
+```
+
+## Explicit products
 
 Mathematics often uses different symbols for different bilinear laws. In code,
 `AlgebraCore` makes the product itself explicit and uses one consistent form:
@@ -55,25 +99,17 @@ underlying data stays fast and dense in NumPy arrays.
 | exterior product | `a ∧ b` | `a @ wedge_product @ b` |
 | Lie bracket | `[a, b]` | `a @ lie_product @ b` |
 
+Instead of hiding multiplication inside `Element`, `AlgebraCore` treats the
+product itself as a first-class object. That keeps scalar scaling and algebra
+multiplication separate:
+
+- `scalar * element` means scalar scaling
+- `a @ product @ b` means multiplication with an explicit bilinear law
+- `transformation @ element` means linear application
+
 The point is deliberate: many algebras look different on paper, but once a
 basis and a bilinear law are fixed, they can be handled in one computational
 form.
-
-## Quick example
-
-```python
-from AlgebraCore.element import UnitElements
-from AlgebraCore.std import complex_basis, complex_product
-
-basis = complex_basis()
-product = complex_product(basis)
-u = UnitElements(basis)
-
-z = 2 * u.id + 3 * u.i
-w = -1 * u.id + 4 * u.i
-
-print(z @ product @ w)  # -14*id + 5*i
-```
 
 ## Define Your Own Algebra
 
@@ -146,91 +182,10 @@ and tensor products of algebra products. In other words, the name is chosen for
 programming clarity, not because `TensorBasis` is meant to introduce a new
 mathematical object beyond `Basis`.
 
-## Transformation Conventions
-
-`Transformation` is used in two closely related but not identical ways, and it
-is worth stating that explicitly.
-
-- `tf @ elem` is the primary computational application operator. It contracts
-  the stored transformation tensor with the element coefficients.
-- `elem.transform(tf)` is the basis-change helper. It applies the inverse of the
-  flattened transformation matrix.
-
-This distinction exists because the library needs both viewpoints:
-
-- a transformation as an explicit multilinear array that can be contracted,
-  tensored, and composed
-- a transformation as a change-of-basis object between coordinate systems
-
-If you are using `Transformation` as a linear operator in computations, prefer
-`tf @ elem`. If you are explicitly changing coordinates from one basis
-description to another, prefer `elem.transform(tf)`.
-
-## Why `a @ product @ b`?
-
-In AlgebraCore, the multiplication law is explicit.
-
-Instead of baking a single product into the `Element` type, the product itself
-is treated as a first-class object. This matters because the same basis can
-support different bilinear laws: for example matrix multiplication, polynomial
-multiplication, Clifford products, exterior products, interior products, or
-user-defined products.
-
-For that reason, AlgebraCore prefers
-
-```python
-a @ product @ b
-```
-
-instead of overloading
-
-```python
-a * b
-```
-
-as algebra multiplication.
-
-This keeps different operations clearly separated:
-
-- `scalar * element` means scalar scaling
-- `a @ product @ b` means multiply with an explicit bilinear law
-- `transformation @ element` means apply a linear map
-
-The same `@` operator is therefore used consistently for contraction,
-application, and composition of explicit algebraic structures.
-
 ## Design Notes
 
 For a slightly more explicit discussion of the main API choices, see
 `DESIGN.md`.
-
-## Installation
-
-Install the published package from PyPI:
-
-```bash
-pip install AlgebraCore
-```
-
-To use the latest repository state directly from GitHub:
-
-```bash
-pip install "git+https://github.com/henrik-schiller/AlgebraCore.git"
-```
-
-For local development:
-
-```bash
-pip install -e ".[test]"
-```
-
-Then run the test suite with:
-
-```bash
-pytest
-```
-
-The release procedure for PyPI is described in `RELEASING.md`.
 
 ## Status
 
